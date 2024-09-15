@@ -10,15 +10,15 @@ function createCard(cardValue, deleteCard, cardLike, openPopupImg) {
   cardImage.src = cardValue.link;
   cardImage.alt = cardValue.name;
   cardElement.querySelector(".card__title").textContent = cardValue.name;
-  cardDeleteButton.addEventListener("click", deleteCard);
+  cardDeleteButton.addEventListener("click", () => deleteCard(cardElement));
   cardLikeButton.addEventListener("click", cardLike);
-  cardImage.addEventListener("click", openPopupImg);
+  cardImage.addEventListener("click", () => openPopupImg(cardValue));
 
   return cardElement;
 }
 
-function deleteCard(event) {
-  event.target.closest(".card").remove();
+function deleteCard(cardElement) {
+  cardElement.remove();
 }
 
 function cardLike(event) {
