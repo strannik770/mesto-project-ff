@@ -7,7 +7,7 @@ function openModal(popupType) {
 
 function closeModal(popupType) {
   popupType.classList.remove("popup_is-opened");
-  document.removeEventListener(closePopupOnKey, document);
+  document.removeEventListener('keydown', closePopupOnKey);
 }
 
 function closePopupOnKey(event) {
