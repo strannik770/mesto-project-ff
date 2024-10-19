@@ -26,55 +26,55 @@ export const getUsersCards = () => {
   }).then(handleResposive);
 };
 
-export const patchUserData = (nameInput, jobInput) => {
+export const patchUserData = (name, about) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      name: nameInput.value,
-      about: jobInput.value,
+      name,
+      about,
     }),
   }).then(handleResposive);
 };
 
-export const postNewCard = (cardNameInput, linkInput) => {
+export const postNewCard = (name, link) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: "POST",
     headers: config.headers,
     body: JSON.stringify({
-      name: cardNameInput.value,
-      link: linkInput.value,
+      name,
+      link,
     }),
   }).then(handleResposive);
 };
 
-export const deleteCardServer = (cardValue) => {
-  return fetch(`${config.baseUrl}/cards/${cardValue._id}`, {
+export const deleteCardServer = (idCard) => {
+  return fetch(`${config.baseUrl}/cards/${idCard}`, {
     method: "DELETE",
     headers: config.headers,
   }).then(handleResposive);
 };
 
-export const putLike = (cardValue) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardValue._id}`, {
+export const putLike = (idCard) => {
+  return fetch(`${config.baseUrl}/cards/likes/${idCard}`, {
     method: "PUT",
     headers: config.headers,
   }).then(handleResposive);
 };
 
-export const deleteLike = (cardValue) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardValue._id}`, {
+export const deleteLike = (idCard) => {
+  return fetch(`${config.baseUrl}/cards/likes/${idCard}`, {
     method: "DELETE",
     headers: config.headers,
   }).then(handleResposive);
 };
 
-export const patchUserAvatar = (linkInputAvatar) => {
+export const patchUserAvatar = (avatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: "PATCH",
     headers: config.headers,
     body: JSON.stringify({
-      avatar: linkInputAvatar.value,
+      avatar,
     }),
   }).then(handleResposive);
 };
