@@ -27,8 +27,8 @@ function createCard(
     cardDeleteButton.style.display = "none";
   }
 
-  for (let key in cardValue.likes) {
-    if (cardValue.likes[key]._id === userData._id) {
+  for (let item of cardValue.likes) {
+    if (item._id === userData._id) {
       cardLikeButton.classList.add("card__like-button_is-active");
       break;
     }
