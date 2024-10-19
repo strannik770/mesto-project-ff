@@ -11,7 +11,7 @@ const handleResposive = (res) => {
     return res.json();
   }
 
-  return Promise.reject(res.status);
+  return Promise.reject(`Ошибка: ${res.status}`);
 };
 
 export const getUserData = () => {
@@ -23,5 +23,58 @@ export const getUserData = () => {
 export const getUsersCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
+  }).then(handleResposive);
+};
+
+export const patchUserData = (nameInput, jobInput) => {
+  return fetch(`${config.baseUrl}/users/me`, {
+    method: "PATCH",
+    headers: config.headers,
+    body: JSON.stringify({
+      name: nameInput.value,
+      about: jobInput.value,
+    }),
+  }).then(handleResposive);
+};
+
+export const postNewCard = (cardNameInput, linkInput) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    method: "POST",
+    headers: config.headers,
+    body: JSON.stringify({
+      name: cardNameInput.value,
+      link: linkInput.value,
+    }),
+  }).then(handleResposive);
+};
+
+export const deleteCardServer = (cardValue) => {
+  return fetch(`${config.baseUrl}/cards/${cardValue._id}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then(handleResposive);
+};
+
+export const putLike = (cardValue) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardValue._id}`, {
+    method: "PUT",
+    headers: config.headers,
+  }).then(handleResposive);
+};
+
+export const deleteLike = (cardValue) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardValue._id}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then(handleResposive);
+};
+
+export const patchUserAvatar = (linkInputAvatar) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: "PATCH",
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: linkInputAvatar.value,
+    }),
   }).then(handleResposive);
 };

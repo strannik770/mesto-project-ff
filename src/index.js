@@ -8,6 +8,12 @@ import {
 import {
   getUserData,
   getUsersCards,
+  patchUserData,
+  postNewCard,
+  deleteCardServer,
+  putLike,
+  deleteLike,
+  patchUserAvatar
 } from "./components/api.js";
 
 // место для карточек
@@ -33,15 +39,18 @@ const img = popupImg.querySelector(".popup__image");
 const formElementEditProfile = document.querySelector("[name = edit-profile]");
 const nameInput = formElementEditProfile.querySelector("[name = name]");
 const jobInput = formElementEditProfile.querySelector("[name = description]");
+const formButtonEditProfile = formElementEditProfile.querySelector(".popup__button");
 // форма новой карточки
 const formElementNewPlace = document.querySelector("[name = new-place]");
 const cardNameInput = formElementNewPlace.querySelector("[name = place-name]");
 const linkInput = formElementNewPlace.querySelector("[name = link]");
+const submitButtonNewPlace =  formElementNewPlace.querySelector(".popup__button");
 //форма нового аватара
 const formElementNewAvatar = document.querySelector("[name = new-avatar]");
 const linkInputAvatar = formElementNewAvatar.querySelector(
   "[name = link-avatar]"
 );
+const submitButtonNewAvatar = formElementNewAvatar.querySelector(".popup__button");
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -57,7 +66,18 @@ enableValidation(validationConfig);
 Promise.all([getUserData(), getUsersCards()]).then(([userData, usersCard]) => {
   setUserData(userData, profileTitle, profileDescription, profileAvatar);
   createCardList(cardList, usersCard, userData);
+}).catch((err) => {
+  console.log(err); 
 });
+
+function setUserData(result, profileTitle, profileDescription, profileAvatar) {
+  profileTitle.textContent = result.name;
+  profileDescription.textContent = result.about;
+  profileAvatar.setAttribute(
+    "style",
+    `background-image: url(${result.avatar})`
+  );
+}
 
 function createCardList(cardList, initialCards, userData) {
   initialCards.forEach((obj) => {
@@ -109,19 +129,26 @@ profileAddButton.addEventListener("click", () => {
   clearErrorValidation(formElementNewPlace, validationConfig);
 });
 
+profileAvatar.addEventListener("click", () => {
+  openModal(popupTypeNewAvatar);
+  clearErrorValidation(formElementNewAvatar, validationConfig);
+});
+
 formElementEditProfile.addEventListener("submit", handleFormSubmitEditProfile);
 
 function handleFormSubmitEditProfile(event) {
   event.preventDefault();
 
-  renderLoading(true, formElementNewPlace.querySelector(".popup__button"));
+  renderLoading(true, formButtonEditProfile);
   patchUserData(nameInput, jobInput)
     .then((result) => {
       profileTitle.textContent = result.name;
       profileDescription.textContent = result.about;
+    }).catch((err) => {
+      console.log(err); 
     })
-    .then(() =>
-      renderLoading(false, formElementNewPlace.querySelector(".popup__button"))
+    .finally(() =>
+      renderLoading(false, formButtonEditProfile)
     );
   closeModal(popupTypeEdit);
 }
@@ -133,7 +160,7 @@ formElementNewPlace.addEventListener("submit", (event) =>
 function hadleFormSumbitNewCard(event, cardList) {
   event.preventDefault();
 
-  renderLoading(true, formElementNewPlace.querySelector(".popup__button"));
+  renderLoading(true, submitButtonNewPlace);
   postNewCard(cardNameInput, linkInput)
     .then((res) => {
       cardList.prepend(
@@ -148,128 +175,37 @@ function hadleFormSumbitNewCard(event, cardList) {
           deleteLike
         )
       );
+    }).catch((err) => {
+      console.log(err); 
     })
     .finally(() =>
-      renderLoading(false, formElementNewPlace.querySelector(".popup__button"))
+      renderLoading(false, submitButtonNewPlace)
     );
 
   formElementNewPlace.reset();
-  clearErrorValidation(formElementNewPlace, validationConfig);
   closeModal(popupTypeNewCard);
 }
-
-function setUserData(result, profileTitle, profileDescription, profileAvatar) {
-  profileTitle.textContent = result.name;
-  profileDescription.textContent = result.about;
-  profileAvatar.setAttribute(
-    "style",
-    `background-image: url(${result.avatar})`
-  );
-}
-
-function patchUserData(nameInput, jobInput) {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-22/users/me", {
-    method: "PATCH",
-    headers: {
-      authorization: "a8ddae83-1e8e-4769-862e-c763902ef95e",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: nameInput.value,
-      about: jobInput.value,
-    }),
-  }).then((res) => res.json());
-}
-
-function postNewCard(cardNameInput, linkInput) {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-22/cards", {
-    method: "POST",
-    headers: {
-      authorization: "a8ddae83-1e8e-4769-862e-c763902ef95e",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: cardNameInput.value,
-      link: linkInput.value,
-    }),
-  }).then((res) => res.json());
-}
-
-function deleteCardServer(cardValue) {
-  return fetch(
-    `https://nomoreparties.co/v1/wff-cohort-22/cards/${cardValue._id}`,
-    {
-      method: "DELETE",
-      headers: {
-        authorization: "a8ddae83-1e8e-4769-862e-c763902ef95e",
-        "Content-Type": "application/json",
-      },
-    }
-  ).then((res) => res.json());
-}
-
-function putLike(cardValue) {
-  return fetch(
-    `https://nomoreparties.co/v1/wff-cohort-22/cards/likes/${cardValue._id}`,
-    {
-      method: "PUT",
-      headers: {
-        authorization: "a8ddae83-1e8e-4769-862e-c763902ef95e",
-        "Content-Type": "application/json",
-      },
-    }
-  ).then((res) => res.json());
-}
-
-function deleteLike(cardValue) {
-  return fetch(
-    `https://nomoreparties.co/v1/wff-cohort-22/cards/likes/${cardValue._id}`,
-    {
-      method: "DELETE",
-      headers: {
-        authorization: "a8ddae83-1e8e-4769-862e-c763902ef95e",
-        "Content-Type": "application/json",
-      },
-    }
-  ).then((res) => res.json());
-}
-
-profileAvatar.addEventListener("click", () => {
-  openModal(popupTypeNewAvatar);
-  clearErrorValidation(formElementNewAvatar, validationConfig);
-});
 
 formElementNewAvatar.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  renderLoading(true, formElementNewAvatar.querySelector(".popup__button"));
+  renderLoading(true, submitButtonNewAvatar);
   patchUserAvatar(linkInputAvatar)
     .then((result) => {
       profileAvatar.setAttribute(
         "style",
         `background-image: url(${result.avatar})`
       );
+    }).catch((err) => {
+      console.log(err); 
     })
     .finally(() =>
-      renderLoading(false, formElementNewAvatar.querySelector(".popup__button"))
+      renderLoading(false, submitButtonNewAvatar)
     );
-
-  clearErrorValidation(formElementNewAvatar, validationConfig);
+  
+  formElementNewAvatar.reset();
   closeModal(popupTypeNewAvatar);
 });
-
-function patchUserAvatar(linkInputAvatar) {
-  return fetch("https://nomoreparties.co/v1/wff-cohort-22/users/me/avatar", {
-    method: "PATCH",
-    headers: {
-      authorization: "a8ddae83-1e8e-4769-862e-c763902ef95e",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      avatar: linkInputAvatar.value,
-    }),
-  }).then((res) => res.json());
-}
 
 function renderLoading(isLoading, button) {
   if (isLoading) {
