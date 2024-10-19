@@ -16,3 +16,5 @@ function closePopupOnKey(event) {
     closeModal(openedPopup);
   }
 }
+
+
