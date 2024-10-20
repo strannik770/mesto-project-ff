@@ -49,8 +49,8 @@ function createCardList(cardList, initialCards, userId) {
 }
 
 function openPopupImg(cardValue) {
-  img.src = cardValue.link;
-  img.alt = cardValue.name;
+  constants.img.src = cardValue.link;
+  constants.img.alt = cardValue.name;
   constants.popupImgCaption.textContent = cardValue.name;
   openModal(constants.popupImg);
 }

@@ -43,3 +43,7 @@ export const validationConfig = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
+
+
+export const popupTypeDelete = document.querySelector(".popup_type_delete");
+export const submitButtonDelete = popupTypeDelete.querySelector("[name = delete]");
